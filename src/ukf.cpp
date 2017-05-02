@@ -270,7 +270,7 @@ void UKF::PredictSigmaPoints(MatrixXd x_aug, double dt) {
       state_update_x     = x_aug(2, i) * cos(x_aug(3, i)) * dt;
       state_update_y     = x_aug(2, i) * sin(x_aug(3, i)) * dt;
       state_update_v     = 0;
-      state_update_rho   = 0;
+      state_update_rho   = x_aug(4, i) * dt;
       state_update_rho_d = 0;
     }
 
@@ -286,13 +286,13 @@ void UKF::PredictSigmaPoints(MatrixXd x_aug, double dt) {
     Xsig_pred_.col(i)(2) = x_aug(2,i) + state_update_v;
     Xsig_pred_.col(i)(3) = (x_aug(3,i) + state_update_rho);
     Xsig_pred_.col(i)(4) = x_aug(4,i) + state_update_rho_d;
-
+#ifdef DEBUG
     if(Xsig_pred_.col(i)(3) - NormalizeAngle(x_aug(3,i) + state_update_rho) > 1e-8)
     {
       cout<<endl<<"Predicted Sigma psi : "<<Xsig_pred_.col(i)(3)<<endl;
       cout<<"Un-normalized Sigma psi : "<<NormalizeAngle(x_aug(3,i) + state_update_rho)<<endl;
     }
-
+#endif
   }
 }
 
@@ -457,7 +457,7 @@ You'll also need to calculate the lidar NIS.
 */
   int n_z = 2;
 
-#if 1
+#ifdef LIDAR_NOT_USING_UKF
   cout<<"LIDAR : Measurement points : "<<endl;
   cout<<meas_package.raw_measurements_;
   cout<<endl;
