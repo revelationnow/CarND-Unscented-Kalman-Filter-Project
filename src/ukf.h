@@ -57,7 +57,6 @@ public:
   double std_radrd_ ;
 
   ///* Weights of sigma points
-  VectorXd weights_;
 
   ///* State dimension
   int n_x_;
@@ -78,6 +77,16 @@ public:
 
   ///* the current NIS for laser
   double NIS_laser_;
+
+  ///* Number of lidar measurements
+  int laser_count_;
+
+  ///* Number of radar measurements
+  int radar_count_;
+
+  ///* Weights
+  VectorXd weights_;
+
 
   /**
    * Constructor
@@ -125,7 +134,17 @@ public:
 
   MatrixXd LidarGetZSigPoints(int n_z);
 
-  VectorXd GetWeights();
+  void InitializeWeights();
+
+  void GetSMatrix(int n_z, MatrixXd R, MatrixXd Zsig, VectorXd z_pred, bool isRadar, MatrixXd &S);
+
+  VectorXd GetZPred(int n_z, MatrixXd Zsig, bool isRadar);
+
+  MatrixXd GetTMatrix(int n_z, MatrixXd Zsig, VectorXd z_pred, bool isRadar);
+
+  MatrixXd RadarGetZSigPoints(int n_z);
+
+  double NormalizeAngle(double input);
 };
 
 #endif /* UKF_H */

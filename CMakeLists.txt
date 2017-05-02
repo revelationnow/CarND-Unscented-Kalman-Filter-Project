@@ -9,4 +9,10 @@ set(sources
    src/main.cpp
    src/tools.cpp)
 
+set(tests
+  src/ukf.cpp
+  src/tools.cpp
+  src/main_test.cpp)
+
 add_executable(UnscentedKF ${sources})
+add_executable(UnscentedKF_test ${tests})

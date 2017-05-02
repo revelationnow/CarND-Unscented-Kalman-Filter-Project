@@ -140,6 +140,9 @@ int main(int argc, char* argv[]) {
   // frame)
 
   size_t number_of_measurements = measurement_pack_list.size();
+  size_t num_laser_NIS_greater = 0;
+  size_t num_radar_NIS_greater = 0;
+  const double NIS_thresh = 7.815;
 
   // column names for output file
   out_file_ << "time_stamp" << "\t";  
@@ -217,11 +220,27 @@ int main(int argc, char* argv[]) {
     estimations.push_back(ukf_x_cartesian_);
     ground_truth.push_back(gt_pack_list[k].gt_values_);
 
+    /* Accumulate NIS information */
+    if(ukf.NIS_laser_ > NIS_thresh)
+    {
+      num_laser_NIS_greater++;
+    }
+
+    if(ukf.NIS_radar_ > NIS_thresh)
+    {
+      num_radar_NIS_greater++;
+    }
+
   }
 
   // compute the accuracy (RMSE)
   Tools tools;
   cout << "RMSE" << endl << tools.CalculateRMSE(estimations, ground_truth) << endl;
+
+  // Compute the final NIS
+  cout << "LASER NIS : "<<(double)num_laser_NIS_greater/(double)ukf.laser_count_<<endl;
+  cout << "RADAR NIS : "<<(double)num_radar_NIS_greater/(double)ukf.radar_count_<<endl;
+
 
   // close files
   if (out_file_.is_open()) {
